@@ -1,16 +1,18 @@
 package com.github.patu11.chessservice.user;
 
+import com.github.patu11.chessservice.Role;
+import com.github.patu11.chessservice.comment.Comment;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "users", schema = "public")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,4 +27,8 @@ public class User {
 
 	@Column
 	private String password;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Comment> comments = new ArrayList<>();
+
 }

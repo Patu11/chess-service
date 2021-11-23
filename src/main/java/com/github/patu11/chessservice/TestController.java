@@ -16,7 +16,6 @@ public class TestController {
 		log.debug("Debug");
 		log.error("Error");
 		log.fatal("Fatal");
-		log.info("Info " + new User("asd@gmail.com", "test_username", "testpassword"));
 		return "Test output";
 	}
 }
