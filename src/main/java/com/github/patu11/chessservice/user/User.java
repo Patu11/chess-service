@@ -2,6 +2,7 @@ package com.github.patu11.chessservice.user;
 
 import com.github.patu11.chessservice.Role;
 import com.github.patu11.chessservice.comment.Comment;
+import com.github.patu11.chessservice.profile.Profile;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,7 +29,21 @@ public class User {
 	@Column
 	private String password;
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(fetch = FetchType.LAZY,
+			cascade = CascadeType.ALL,
+			mappedBy = "user")
+	private Profile profile;
+
+	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Comment> comments = new ArrayList<>();
 
+	public void addComment(Comment comment) {
+		comment.setAuthor(this);
+		this.comments.add(comment);
+	}
+
+	public void setProfile(Profile profile) {
+		profile.setUser(this);
+		this.profile = profile;
+	}
 }
