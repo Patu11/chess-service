@@ -24,7 +24,6 @@ public class ProfileController {
 
 	@PostMapping("/addcomment")
 	public void addComment(@RequestBody CommentDTO comment) {
-		log.info(comment);
 		this.profileService.addComment(comment);
 	}
 }

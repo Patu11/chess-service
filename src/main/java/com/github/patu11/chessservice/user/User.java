@@ -2,6 +2,7 @@ package com.github.patu11.chessservice.user;
 
 import com.github.patu11.chessservice.Role;
 import com.github.patu11.chessservice.comment.Comment;
+import com.github.patu11.chessservice.friend.Friend;
 import com.github.patu11.chessservice.profile.Profile;
 import lombok.*;
 
@@ -36,6 +37,9 @@ public class User {
 
 	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Comment> comments = new ArrayList<>();
+
+	@OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Friend> friends = new ArrayList<>();
 
 	public void addComment(Comment comment) {
 		comment.setAuthor(this);
