@@ -2,16 +2,16 @@ package com.github.patu11.chessservice.user;
 
 import com.github.patu11.chessservice.comment.CommentDTO;
 import com.github.patu11.chessservice.friend.FriendDTO;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.github.patu11.chessservice.role.RoleDTO;
+import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
@@ -20,6 +20,7 @@ public class UserDTO {
 	private String password;
 	private List<CommentDTO> comments;
 	private List<FriendDTO> friends;
+	private Set<RoleDTO> roles;
 
 	public UserDTO(User user) {
 		this.email = user.getEmail();
@@ -27,5 +28,6 @@ public class UserDTO {
 		this.password = user.getPassword();
 		this.comments = user.getComments().stream().map(CommentDTO::new).collect(Collectors.toList());
 		this.friends = user.getFriends().stream().map(FriendDTO::new).collect(Collectors.toList());
+		this.roles = user.getRoles().stream().map(RoleDTO::new).collect(Collectors.toSet());
 	}
 }

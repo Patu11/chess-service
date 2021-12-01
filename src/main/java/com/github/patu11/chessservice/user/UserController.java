@@ -23,9 +23,18 @@ public class UserController {
 		this.userService.createUser(user);
 	}
 
-	@GetMapping
-	public UserDTO getUser(@RequestHeader("username") String username) {
-		return this.userService.getUser(username);
+	@GetMapping("/username/{username}")
+	public UserDTO getUserByUsername(@PathVariable("username") String username) {
+		return this.userService.getUserByUsername(username);
+	}
+
+	@GetMapping("/email/{email}")
+	public UserDTO getUserByEmail(@PathVariable("email") String email) {
+		return this.userService.getUserByEmail(email);
+	}
+
+	@GetMapping("/login")
+	public void login() {
 	}
 
 	@GetMapping("/all")

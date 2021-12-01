@@ -29,8 +29,8 @@ public class FriendService {
 	}
 
 	public void createFriend(FriendDTO friend) {
-		User user1 = this.userService.getRawUser(friend.getUser1());
-		User user2 = this.userService.getRawUser(friend.getUser2());
+		User user1 = this.userService.getRawUserByUsername(friend.getUser1());
+		User user2 = this.userService.getRawUserByUsername(friend.getUser2());
 		boolean status = friend.isStatus();
 
 		Friend friend1 = new Friend();
@@ -47,8 +47,8 @@ public class FriendService {
 	}
 
 	public void acceptFriendship(FriendDTO friendDTO) {
-		User user1 = this.userService.getRawUser(friendDTO.getUser1());
-		User user2 = this.userService.getRawUser(friendDTO.getUser2());
+		User user1 = this.userService.getRawUserByUsername(friendDTO.getUser1());
+		User user2 = this.userService.getRawUserByUsername(friendDTO.getUser2());
 		Optional<Friend> friend1Optional = this.friendRepository.findFriendByUser1AndUser2(user1, user2);
 		Optional<Friend> friend2Optional = this.friendRepository.findFriendByUser1AndUser2(user2, user1);
 		Friend friend1 = friend1Optional.orElseThrow(() -> new NotFoundException("Friendship not found."));
@@ -61,8 +61,8 @@ public class FriendService {
 	}
 
 	public void declineFriendship(String us1, String us2) {
-		User user1 = this.userService.getRawUser(us1);
-		User user2 = this.userService.getRawUser(us2);
+		User user1 = this.userService.getRawUserByUsername(us1);
+		User user2 = this.userService.getRawUserByUsername(us2);
 		Optional<Friend> friend1Optional = this.friendRepository.findFriendByUser1AndUser2(user1, user2);
 		Optional<Friend> friend2Optional = this.friendRepository.findFriendByUser1AndUser2(user2, user1);
 		Friend friend1 = friend1Optional.orElseThrow(() -> new NotFoundException("Friendship not found."));

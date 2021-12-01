@@ -1,6 +1,6 @@
 package com.github.patu11.chessservice.user;
 
-import com.github.patu11.chessservice.Role;
+import com.github.patu11.chessservice.role.Role;
 import com.github.patu11.chessservice.comment.Comment;
 import com.github.patu11.chessservice.friend.Friend;
 import com.github.patu11.chessservice.profile.Profile;
@@ -41,6 +41,14 @@ public class User {
 	@OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Friend> friends = new ArrayList<>();
 
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "users_roles",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id")
+	)
+	private Set<Role> roles = new HashSet<>();
+
 	public void addComment(Comment comment) {
 		comment.setAuthor(this);
 		this.comments.add(comment);
@@ -49,6 +57,12 @@ public class User {
 	public void setProfile(Profile profile) {
 		profile.setUser(this);
 		this.profile = profile;
+	}
+
+
+	public void addRole(Role role) {
+		role.addUser(this);
+		this.roles.add(role);
 	}
 
 	public void addFriend(Friend friend) {

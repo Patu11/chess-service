@@ -2,6 +2,7 @@ package com.github.patu11.chessservice.profile;
 
 import com.github.patu11.chessservice.comment.Comment;
 import com.github.patu11.chessservice.comment.CommentDTO;
+import com.github.patu11.chessservice.config.SecurityConfig;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,8 @@ public class ProfileController {
 		this.profileService = profileService;
 	}
 
-	@GetMapping
-	public ProfileDTO getProfile(@RequestHeader("username") String username) {
+	@GetMapping("/{username}")
+	public ProfileDTO getProfile(@PathVariable String username) {
 		return this.profileService.getProfile(username);
 	}
 
