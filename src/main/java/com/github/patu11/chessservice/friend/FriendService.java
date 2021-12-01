@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Log4j
 @Service
@@ -41,7 +42,31 @@ public class FriendService {
 		friend2.setStatus(status);
 		friend2.setUser1(user2);
 		friend2.setUser2(user1);
-		
+
 		this.friendRepository.saveAll(List.of(friend1, friend2));
+	}
+
+	public void acceptFriendship(FriendDTO friendDTO) {
+		User user1 = this.userService.getRawUser(friendDTO.getUser1());
+		User user2 = this.userService.getRawUser(friendDTO.getUser2());
+		Optional<Friend> friend1Optional = this.friendRepository.findFriendByUser1AndUser2(user1, user2);
+		Optional<Friend> friend2Optional = this.friendRepository.findFriendByUser1AndUser2(user2, user1);
+		Friend friend1 = friend1Optional.orElseThrow(() -> new NotFoundException("Friendship not found."));
+		Friend friend2 = friend2Optional.orElseThrow(() -> new NotFoundException("Friendship not found."));
+
+		friend1.setStatus(true);
+		friend2.setStatus(true);
+
+		this.friendRepository.saveAll(List.of(friend1, friend2));
+	}
+
+	public void declineFriendship(String us1, String us2) {
+		User user1 = this.userService.getRawUser(us1);
+		User user2 = this.userService.getRawUser(us2);
+		Optional<Friend> friend1Optional = this.friendRepository.findFriendByUser1AndUser2(user1, user2);
+		Optional<Friend> friend2Optional = this.friendRepository.findFriendByUser1AndUser2(user2, user1);
+		Friend friend1 = friend1Optional.orElseThrow(() -> new NotFoundException("Friendship not found."));
+		Friend friend2 = friend2Optional.orElseThrow(() -> new NotFoundException("Friendship not found."));
+		this.friendRepository.deleteAll(List.of(friend1, friend2));
 	}
 }

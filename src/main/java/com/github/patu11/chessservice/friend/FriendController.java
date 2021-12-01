@@ -24,4 +24,15 @@ public class FriendController {
 	public void createFriend(@RequestBody FriendDTO friendDTO) {
 		this.friendService.createFriend(friendDTO);
 	}
+
+	@PutMapping("/accept")
+	public void acceptFriendShip(@RequestBody FriendDTO friendDTO) {
+		log.info(friendDTO);
+		this.friendService.acceptFriendship(friendDTO);
+	}
+
+	@DeleteMapping("/delete/{user1}/{user2}")
+	public void declineFriendship(@PathVariable String user1, @PathVariable String user2) {
+		this.friendService.declineFriendship(user1, user2);
+	}
 }
