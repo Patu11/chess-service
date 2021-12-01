@@ -50,4 +50,8 @@ public class User {
 		profile.setUser(this);
 		this.profile = profile;
 	}
+
+	public void addFriend(Friend friend) {
+		this.friends.add(friend);
+	}
 }

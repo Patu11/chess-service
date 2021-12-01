@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -22,10 +25,11 @@ public class UserService {
 
 	@Transactional
 	public void createUser(UserDTO user) {
-		if (userRepository.findById(user.getEmail()).isPresent()) {
+		Optional<User> userOpt = userRepository.findById(user.getEmail());
+		if (userOpt.isPresent()) {
 			throw new UserAlreadyExistException("User already exist.");
 		}
-
+		
 		User us = new User();
 		us.setUsername(user.getUsername());
 		us.setEmail(user.getEmail());
@@ -41,6 +45,10 @@ public class UserService {
 //			throw new BadRequestDataException("Empty data fields.");
 //		}
 		this.userRepository.save(us);
+	}
+
+	public List<UserDTO> getAllUsers() {
+		return this.userRepository.findAll().stream().map(UserDTO::new).collect(Collectors.toList());
 	}
 
 	public User getRawUser(String username) {

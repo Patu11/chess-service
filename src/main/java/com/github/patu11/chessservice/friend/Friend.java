@@ -1,10 +1,7 @@
 package com.github.patu11.chessservice.friend;
 
 import com.github.patu11.chessservice.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -12,6 +9,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@ToString
 @Table(name = "friends", schema = "public")
 @AllArgsConstructor
 @NoArgsConstructor
