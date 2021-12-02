@@ -1,5 +1,6 @@
 package com.github.patu11.chessservice.friend;
 
+import com.github.patu11.chessservice.exceptions.BadRequestDataException;
 import com.github.patu11.chessservice.exceptions.NotFoundException;
 import com.github.patu11.chessservice.user.User;
 import com.github.patu11.chessservice.user.UserService;
@@ -22,11 +23,18 @@ public class FriendService {
 		this.userService = userService;
 	}
 
-	public FriendDTO getFriend(Long id) {
-		Friend friend = this.friendRepository.findById(id).orElseThrow(() -> new NotFoundException("Friendship not found"));
-
-		return new FriendDTO(friend);
+	public boolean friendshipExists(String user1, String user2) {
+		User us1 = this.userService.getRawUserByUsername(user1);
+		User us2 = this.userService.getRawUserByUsername(user2);
+		
+		return this.friendRepository.existsByUser1AndUser2(us1, us2);
 	}
+
+//	public FriendDTO getFriend(Long id) {
+//		Friend friend = this.friendRepository.findById(id).orElseThrow(() -> new NotFoundException("Friendship not found"));
+//
+//		return new FriendDTO(friend);
+//	}
 
 	public void createFriend(FriendDTO friend) {
 		User user1 = this.userService.getRawUserByUsername(friend.getUser1());

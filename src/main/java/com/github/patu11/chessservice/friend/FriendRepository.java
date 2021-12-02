@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 	Optional<Friend> findFriendByUser1AndUser2(User user1, User user2);
+	Boolean existsByUser1AndUser2(User user1, User user2);
 }
