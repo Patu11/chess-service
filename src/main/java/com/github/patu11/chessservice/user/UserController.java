@@ -1,10 +1,13 @@
 package com.github.patu11.chessservice.user;
 
+import com.github.patu11.chessservice.config.SimpleToken;
+import com.github.patu11.chessservice.role.RoleDTO;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Log4j
 @RestController
@@ -33,8 +36,14 @@ public class UserController {
 		return this.userService.getUserByEmail(email);
 	}
 
+	@GetMapping("/role/{email}")
+	public Set<RoleDTO> getUserRole(@PathVariable("email") String email) {
+		return this.userService.getUserByEmail(email).getRoles();
+	}
+
 	@GetMapping("/login")
-	public void login() {
+	public SimpleToken login(@RequestHeader("authorization") String header) {
+		return this.userService.handleLogin(header);
 	}
 
 	@GetMapping("/all")

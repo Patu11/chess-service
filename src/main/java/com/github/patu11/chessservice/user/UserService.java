@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -78,4 +77,14 @@ public class UserService {
 		return new UserDTO(u);
 	}
 
+	public SimpleToken handleLogin(String header) {
+		if (header.isBlank()) {
+			throw new BadRequestDataException("Authorization token is empty.");
+		}
+		byte[] decodedBytes = Base64.getDecoder().decode(header.substring(6));
+		String decodedString = new String(decodedBytes);
+		String email = decodedString.split(":")[0];
+		User u = this.getRawUserByEmail(email);
+		return new SimpleToken(u);
+	}
 }

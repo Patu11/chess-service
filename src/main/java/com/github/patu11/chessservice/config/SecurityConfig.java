@@ -24,20 +24,6 @@ import java.util.stream.Collectors;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//	@Override
-//	protected void configure(HttpSecurity security) throws Exception {
-//		security.cors().and().csrf().disable();
-//
-//		security
-//				.authorizeRequests()
-//				.antMatchers("/users", "/users/signup").permitAll()
-//				.antMatchers("/profiles/**").hasAnyAuthority("USER", "ADMIN")
-//				.anyRequest()
-//				.authenticated()
-//				.and()
-//				.httpBasic();
-//	}
-
 	@Override
 	protected void configure(HttpSecurity security) throws Exception {
 		security.cors().and().csrf().disable();
@@ -46,19 +32,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.authorizeRequests()
 				.antMatchers("/users/login").permitAll()
 				.antMatchers("/users/signup").permitAll()
-				.antMatchers("/profiles/**").permitAll()
+				.antMatchers("/users/role/**").permitAll()
+				.antMatchers("/profiles/**").hasAuthority("ADMIN")
 				.anyRequest().authenticated()
 				.and()
 				.httpBasic();
-	}
-
-	public static String getPrincipal() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-		Set<String> roles = authentication.getAuthorities().stream()
-				.map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-		roles.forEach(System.out::println);
-		return "test";
 	}
 
 	@Bean
