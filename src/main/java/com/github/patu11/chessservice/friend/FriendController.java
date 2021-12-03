@@ -37,7 +37,6 @@ public class FriendController {
 
 	@PutMapping("/accept")
 	public void acceptFriendShip(@RequestBody FriendDTO friendDTO) {
-		log.info(friendDTO);
 		this.friendService.acceptFriendship(friendDTO);
 	}
 

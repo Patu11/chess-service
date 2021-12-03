@@ -4,6 +4,9 @@ import com.github.patu11.chessservice.config.SimpleToken;
 import com.github.patu11.chessservice.exceptions.BadRequestDataException;
 import com.github.patu11.chessservice.exceptions.NotFoundException;
 import com.github.patu11.chessservice.exceptions.UserAlreadyExistException;
+import com.github.patu11.chessservice.friend.Friend;
+import com.github.patu11.chessservice.friend.FriendRepository;
+import com.github.patu11.chessservice.friend.FriendService;
 import com.github.patu11.chessservice.profile.Profile;
 import com.github.patu11.chessservice.role.Role;
 import com.github.patu11.chessservice.role.RoleService;
@@ -23,12 +26,14 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final RoleService roleService;
 	private final PasswordEncoder passwordEncoder;
+	private final FriendRepository friendRepository;
 
 	@Autowired
-	public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
+	public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder, FriendRepository friendRepository) {
 		this.userRepository = userRepository;
 		this.roleService = roleService;
 		this.passwordEncoder = passwordEncoder;
+		this.friendRepository = friendRepository;
 	}
 
 	@Transactional
@@ -54,6 +59,16 @@ public class UserService {
 
 		this.userRepository.save(us);
 	}
+	
+	public void updateUserPassword(String username, ChangePasswordData password) {
+		if (username.isBlank() || password.getPassword().isBlank()) {
+			throw new BadRequestDataException("Username or password is empty.");
+		}
+
+		User u = this.getRawUserByUsername(username);
+		u.setPassword(this.passwordEncoder.encode(password.getPassword()));
+		this.userRepository.save(u);
+	}
 
 	public List<UserDTO> getAllUsers() {
 		return this.userRepository.findAll().stream().map(UserDTO::new).collect(Collectors.toList());
@@ -75,6 +90,19 @@ public class UserService {
 	public UserDTO getUserByEmail(String email) {
 		User u = this.userRepository.findById(email).orElseThrow(() -> new NotFoundException("User not found."));
 		return new UserDTO(u);
+	}
+
+	public void deleteUserByEmail(String email) {
+		if (email.isBlank()) {
+			throw new BadRequestDataException("Email is empty.");
+		}
+
+		User u = this.getRawUserByEmail(email);
+		List<Friend> friends = this.friendRepository.findAllByUser1(u);
+		friends.addAll(this.friendRepository.findAllByUser2(u));
+
+		this.friendRepository.deleteAll(friends);
+		this.userRepository.deleteById(email);
 	}
 
 	public SimpleToken handleLogin(String header) {

@@ -21,6 +21,11 @@ public class UserController {
 		this.userService = userService;
 	}
 
+	@PutMapping("/editpassword/{username}")
+	public void updateUserPassword(@PathVariable String username, @RequestBody ChangePasswordData password) {
+		this.userService.updateUserPassword(username, password);
+	}
+	
 	@PostMapping("/signup")
 	public void createUser(@RequestBody UserDTO user) {
 		this.userService.createUser(user);
@@ -49,5 +54,10 @@ public class UserController {
 	@GetMapping("/all")
 	public List<UserDTO> getAllUsers() {
 		return this.userService.getAllUsers();
+	}
+
+	@DeleteMapping("/delete/{email}")
+	public void deleteUserByEmail(@PathVariable String email) {
+		this.userService.deleteUserByEmail(email);
 	}
 }

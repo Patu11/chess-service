@@ -26,7 +26,7 @@ public class FriendService {
 	public boolean friendshipExists(String user1, String user2) {
 		User us1 = this.userService.getRawUserByUsername(user1);
 		User us2 = this.userService.getRawUserByUsername(user2);
-		
+
 		return this.friendRepository.existsByUser1AndUser2(us1, us2);
 	}
 
@@ -66,6 +66,14 @@ public class FriendService {
 		friend2.setStatus(true);
 
 		this.friendRepository.saveAll(List.of(friend1, friend2));
+	}
+
+	public void deleteAllUserFriendships(String email) {
+		User u = this.userService.getRawUserByEmail(email);
+		List<Friend> friends = this.friendRepository.findAllByUser1(u);
+		friends.addAll(this.friendRepository.findAllByUser2(u));
+
+		this.friendRepository.deleteAll(friends);
 	}
 
 	public void declineFriendship(String us1, String us2) {

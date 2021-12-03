@@ -41,7 +41,7 @@ public class User {
 	@OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Friend> friends = new ArrayList<>();
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "users_roles",
 			joinColumns = @JoinColumn(name = "user_id"),
@@ -63,6 +63,11 @@ public class User {
 	public void addRole(Role role) {
 		role.addUser(this);
 		this.roles.add(role);
+	}
+
+	public void removeRole(Role role) {
+		role.removeUser(this);
+		this.roles.remove(role);
 	}
 
 	public void addFriend(Friend friend) {
