@@ -2,6 +2,7 @@ package com.github.patu11.chessservice.user;
 
 import com.github.patu11.chessservice.comment.CommentDTO;
 import com.github.patu11.chessservice.friend.FriendDTO;
+import com.github.patu11.chessservice.game.GameDTO;
 import com.github.patu11.chessservice.role.RoleDTO;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class UserDTO {
 	private List<CommentDTO> comments;
 	private List<FriendDTO> friends;
 	private Set<RoleDTO> roles;
+	private List<GameDTO> games;
 
 	public UserDTO(User user) {
 		this.email = user.getEmail();
@@ -29,5 +31,6 @@ public class UserDTO {
 		this.comments = user.getComments().stream().map(CommentDTO::new).collect(Collectors.toList());
 		this.friends = user.getFriends().stream().map(FriendDTO::new).collect(Collectors.toList());
 		this.roles = user.getRoles().stream().map(RoleDTO::new).collect(Collectors.toSet());
+		this.games = user.getGames().stream().map(GameDTO::new).collect(Collectors.toList());
 	}
 }

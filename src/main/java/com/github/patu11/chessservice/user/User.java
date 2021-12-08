@@ -1,5 +1,6 @@
 package com.github.patu11.chessservice.user;
 
+import com.github.patu11.chessservice.game.Game;
 import com.github.patu11.chessservice.role.Role;
 import com.github.patu11.chessservice.comment.Comment;
 import com.github.patu11.chessservice.friend.Friend;
@@ -41,6 +42,9 @@ public class User {
 	@OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Friend> friends = new ArrayList<>();
 
+	@OneToMany(mappedBy = "host", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Game> games = new ArrayList<>();
+	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 			name = "users_roles",
