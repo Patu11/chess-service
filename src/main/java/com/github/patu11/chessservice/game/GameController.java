@@ -18,9 +18,9 @@ public class GameController {
 		this.gameService = gameService;
 	}
 
-	@GetMapping("/{host}/{user}")
-	public GameDTO getGameByHostOrUser(@PathVariable String host, @PathVariable String user) {
-		return this.gameService.getGameByHostOrUser(host, user);
+	@GetMapping("/{username}")
+	public GameDTO getGameByHostOrUser(@PathVariable String username) {
+		return this.gameService.getGameByHostOrUser(username);
 	}
 
 	@GetMapping("/all")

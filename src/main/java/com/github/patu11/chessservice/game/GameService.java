@@ -58,6 +58,10 @@ public class GameService {
 		return this.gameRepository.findAll().stream().map(GameDTO::new).collect(Collectors.toList());
 	}
 
+	public List<Game> getAllGamesRaw() {
+		return this.gameRepository.findAll();
+	}
+
 	public List<String> getAllCodes() {
 		List<Game> games = this.gameRepository.findAll();
 		return games.stream().map(Game::getGameCode).collect(Collectors.toList());
@@ -74,31 +78,27 @@ public class GameService {
 		g.setEnded(g.isEnded());
 		g.setState(game.getState());
 		g.setWinner(g.getWinner());
-		g.setCurrentTurn(g.getCurrentTurn());
+		g.setCurrentTurn(host.getUsername());
 		g.setHost(host);
 		g.setPlayer(player);
 
 		this.gameRepository.save(g);
 	}
 
-	public GameDTO getGameByHostOrUser(String host, String user) {
-		User user1 = this.userService.getRawUserByUsername(host);
-		User user2 = this.userService.getRawUserByUsername(user);
+	public GameDTO getGameByHostOrUser(String username) {
 
-		Optional<Game> optionalGame = this.gameRepository.findGameByHostOrPlayer(user1, user2);
+		List<Game> availableGames = this.getAllGamesRaw()
+				.stream()
+				.filter(g -> g.getHost().getUsername().equals(username) || g.getPlayer().getUsername().equals(username))
+				.filter(g -> !g.isEnded() && g.isAccepted())
+				.collect(Collectors.toList());
+
+
+		Optional<Game> optionalGame = availableGames.stream().findFirst();
 		if (optionalGame.isEmpty()) {
 			throw new NotFoundException("Game not found.");
 		}
 		Game g = optionalGame.get();
-
-		if (g.isEnded()) {
-			throw new NotFoundException("Game not found.");
-		}
-
-//		if (!g.isAccepted()) {
-//			throw new NotFoundException("Game not found.");
-//		}
-
 		return new GameDTO(g);
 	}
 }
