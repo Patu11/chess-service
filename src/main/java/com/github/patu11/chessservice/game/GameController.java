@@ -1,7 +1,11 @@
 package com.github.patu11.chessservice.game;
 
+import com.github.patu11.chessservice.friend.FriendDTO;
 import lombok.extern.log4j.Log4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Log4j
 @RestController
@@ -19,14 +23,39 @@ public class GameController {
 		return this.gameService.getGameByHostOrUser(host, user);
 	}
 
-	@PutMapping("/status/{code}")
-	public void updateGameState(@PathVariable String code, @RequestBody String state) {
-		this.gameService.updateGameState(code, state);
+	@GetMapping("/all")
+	public List<GameDTO> getAllGames() {
+		return this.gameService.getAllGames();
 	}
 
-	@PutMapping("/turn/{code}")
-	public void updateGameTurn(@PathVariable String code, @RequestBody String username) {
-		this.gameService.updateGameTurn(code, username);
+	@GetMapping("/codes")
+	public List<String> getAllCodes() {
+		return this.gameService.getAllCodes();
+	}
+
+	@PostMapping
+	public void createGame(@RequestBody GameDTO game) {
+		this.gameService.createGame(game);
+	}
+
+	@PutMapping("/update/{code}")
+	public void updateGame(@PathVariable String code, @RequestBody Map<String, String> state) {
+		this.gameService.updateGame(code, state);
+	}
+
+	@PutMapping("/winner/{code}")
+	public void updateWinner(@PathVariable String code, @RequestBody Map<String, String> state) {
+		this.gameService.updateWinner(code, state);
+	}
+
+	@PutMapping("/accept/{code}")
+	public void acceptGameInvite(@PathVariable String code) {
+		this.gameService.acceptGameInvite(code);
+	}
+
+	@DeleteMapping("/delete/{code}")
+	public void declineFriendship(@PathVariable String code) {
+		this.gameService.deleteByCode(code);
 	}
 
 }

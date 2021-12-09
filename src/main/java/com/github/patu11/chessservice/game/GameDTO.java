@@ -10,7 +10,7 @@ import lombok.*;
 public class GameDTO {
 	private String code;
 	private String host;
-	private String user;
+	private String player;
 	private String state;
 	private String winner;
 	private String currentTurn;
@@ -21,7 +21,7 @@ public class GameDTO {
 	public GameDTO(Game game) {
 		this.code = game.getGameCode();
 		this.host = game.getHost().getUsername();
-		this.user = game.getPlayer().getUsername();
+		this.player = game.getPlayer().getUsername();
 		this.state = game.getState();
 		this.winner = game.getWinner();
 		this.currentTurn = game.getCurrentTurn();
