@@ -47,7 +47,6 @@ public class UserService {
 		Role role = this.roleService.getRole("USER");
 		us.setUsername(user.getUsername());
 		us.setEmail(user.getEmail());
-		log.info("Password: " + user.getPassword());
 		us.setPassword(this.passwordEncoder.encode(user.getPassword()));
 		us.setComments(new ArrayList<>());
 		us.addRole(role);
@@ -59,7 +58,7 @@ public class UserService {
 
 		this.userRepository.save(us);
 	}
-	
+
 	public void updateUserPassword(String username, ChangePasswordData password) {
 		if (username.isBlank() || password.getPassword().isBlank()) {
 			throw new BadRequestDataException("Username or password is empty.");

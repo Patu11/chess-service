@@ -1,5 +1,7 @@
 package com.github.patu11.chessservice.game;
 
+import com.github.patu11.chessservice.tournament.Tournament;
+import com.github.patu11.chessservice.tournament.TournamentDTO;
 import lombok.*;
 
 @Getter
@@ -14,6 +16,7 @@ public class GameDTO {
 	private String state;
 	private String winner;
 	private String currentTurn;
+	private Long tournamentId;
 	private boolean started;
 	private boolean accepted;
 	private boolean ended;
@@ -25,6 +28,7 @@ public class GameDTO {
 		this.state = game.getState();
 		this.winner = game.getWinner();
 		this.currentTurn = game.getCurrentTurn();
+		this.tournamentId = game.getTournament() == null ? -1L : game.getTournament().getTournamentId();
 		this.started = game.isStarted();
 		this.accepted = game.isAccepted();
 		this.ended = game.isEnded();

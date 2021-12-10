@@ -1,5 +1,6 @@
 package com.github.patu11.chessservice.game;
 
+import com.github.patu11.chessservice.tournament.Tournament;
 import com.github.patu11.chessservice.user.User;
 import lombok.*;
 
@@ -35,6 +36,10 @@ public class Game {
 
 	@Column
 	private String currentTurn;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "tournament_id")
+	private Tournament tournament;
 
 	@ManyToOne
 	@JoinColumn(name = "host")
