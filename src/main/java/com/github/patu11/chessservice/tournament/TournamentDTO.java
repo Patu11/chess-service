@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class TournamentDTO {
 	private Long tournamentId;
 	private String title;
+	private String bracket;
 	private int maxPlayers;
 	private String startDate;
 	private String endDate;
@@ -25,6 +26,7 @@ public class TournamentDTO {
 	public TournamentDTO(Tournament tournament) {
 		this.tournamentId = tournament.getTournamentId();
 		this.title = tournament.getTitle();
+		this.bracket = tournament.getBracket();
 		this.maxPlayers = tournament.getMaxPlayers();
 		this.startDate = tournament.getStartDate().toString();
 		this.endDate = tournament.getEndDate().toString();

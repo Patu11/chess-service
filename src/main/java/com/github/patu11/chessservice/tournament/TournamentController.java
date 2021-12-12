@@ -1,5 +1,6 @@
 package com.github.patu11.chessservice.tournament;
 
+import com.github.patu11.chessservice.game.GameDTO;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +20,24 @@ public class TournamentController {
 		this.tournamentService = tournamentService;
 	}
 
-	@PostMapping
+	@PostMapping("/create")
 	public void createTournament(@RequestBody TournamentDTO tournament) {
 		this.tournamentService.createTournament(tournament);
 	}
 
+	@DeleteMapping("/delete/{tournamentId}")
+	public void deleteTournament(@PathVariable Long tournamentId) {
+		this.tournamentService.deleteTournament(tournamentId);
+	}
+
+	@PutMapping("/leave/{tournamentId}")
+	public int removeUserFromTournament(@PathVariable Long tournamentId, @RequestBody Map<String, String> data) {
+		return this.tournamentService.removeUserFromTournament(tournamentId, data);
+	}
+
 	@PutMapping("/join/{tournamentId}")
-	public void addUserToTournament(@PathVariable Long tournamentId, @RequestBody Map<String, String> data) {
-		log.info(tournamentId + " - " + data.get("username"));
-		this.tournamentService.addUserToTournament(tournamentId, data);
+	public int addUserToTournament(@PathVariable Long tournamentId, @RequestBody Map<String, String> data) {
+		return this.tournamentService.addUserToTournament(tournamentId, data);
 	}
 
 	@GetMapping("/all")
@@ -38,5 +48,10 @@ public class TournamentController {
 	@GetMapping("/{tournamentId}")
 	public TournamentDTO getTournament(@PathVariable Long tournamentId) {
 		return this.tournamentService.getTournament(tournamentId);
+	}
+
+	@GetMapping("/games/{tournamentId}")
+	public List<GameDTO> getAllTournamentGames(@PathVariable Long tournamentId) {
+		return this.tournamentService.getAllTournamentGames(tournamentId);
 	}
 }

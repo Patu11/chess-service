@@ -1,6 +1,9 @@
 package com.github.patu11.chessservice.game;
 
 import com.github.patu11.chessservice.exceptions.NotFoundException;
+import com.github.patu11.chessservice.tournament.Tournament;
+import com.github.patu11.chessservice.tournament.TournamentRepository;
+import com.github.patu11.chessservice.tournament.TournamentService;
 import com.github.patu11.chessservice.user.User;
 import com.github.patu11.chessservice.user.UserService;
 import lombok.extern.log4j.Log4j;
@@ -70,6 +73,11 @@ public class GameService {
 	public void createGame(GameDTO game) {
 		User host = this.userService.getRawUserByUsername(game.getHost());
 		User player = this.userService.getRawUserByUsername(game.getPlayer());
+//		Tournament tournament = null;
+//		if (game.getTournamentId() != null) {
+//			tournament = this.tournamentRepository.findById(game.getTournamentId()).orElseThrow(() -> new NotFoundException("Tournament not found."));
+//		}
+
 
 		Game g = new Game();
 		g.setGameCode(game.getCode());
@@ -81,6 +89,7 @@ public class GameService {
 		g.setCurrentTurn(host.getUsername());
 		g.setHost(host);
 		g.setPlayer(player);
+//		g.setTournament(tournament);
 
 		this.gameRepository.save(g);
 	}

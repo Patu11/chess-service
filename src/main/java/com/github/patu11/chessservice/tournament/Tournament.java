@@ -5,6 +5,8 @@ import com.github.patu11.chessservice.game.Game;
 import com.github.patu11.chessservice.role.Role;
 import com.github.patu11.chessservice.user.User;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -33,6 +35,9 @@ public class Tournament {
 	private String title;
 
 	@Column
+	private String bracket;
+
+	@Column
 	private int maxPlayers;
 
 	@Column
@@ -40,11 +45,12 @@ public class Tournament {
 
 	@Column
 	private LocalDate endDate;
-	
+
 	@Column
 	private String winner;
 
-	@OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Fetch(FetchMode.SELECT)
+	@OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Game> games = new ArrayList<>();
 
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -63,5 +69,15 @@ public class Tournament {
 	public void removeUser(User user) {
 		user.removeTournament(this);
 		this.users.remove(user);
+	}
+
+	public void addGame(Game game) {
+		game.setTournament(this);
+		this.games.add(game);
+	}
+
+	public void removeGame(Game game) {
+		game.setTournament(null);
+		this.games.remove(game);
 	}
 }

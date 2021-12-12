@@ -25,7 +25,7 @@ public class UserController {
 	public void updateUserPassword(@PathVariable String username, @RequestBody ChangePasswordData password) {
 		this.userService.updateUserPassword(username, password);
 	}
-	
+
 	@PostMapping("/signup")
 	public void createUser(@RequestBody UserDTO user) {
 		this.userService.createUser(user);
