@@ -42,11 +42,13 @@ public class FriendService {
 		boolean status = friend.isStatus();
 
 		Friend friend1 = new Friend();
+		friend1.setSender(friend.getSender());
 		friend1.setStatus(status);
 		friend1.setUser1(user1);
 		friend1.setUser2(user2);
 
 		Friend friend2 = new Friend();
+		friend2.setSender(friend.getSender());
 		friend2.setStatus(status);
 		friend2.setUser1(user2);
 		friend2.setUser2(user1);

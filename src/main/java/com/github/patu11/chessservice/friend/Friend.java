@@ -23,6 +23,9 @@ public class Friend {
 	@Column
 	private boolean status;
 
+	@Column
+	private String sender;
+
 	@ManyToOne
 	@JoinColumn(name = "user_first")
 	private User user1;
