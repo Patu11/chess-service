@@ -1,5 +1,6 @@
 package com.github.patu11.chessservice.game;
 
+import com.github.patu11.chessservice.round.Round;
 import com.github.patu11.chessservice.tournament.Tournament;
 import com.github.patu11.chessservice.user.User;
 import lombok.*;
@@ -9,7 +10,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "games", schema = "public")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,7 +36,11 @@ public class Game {
 
 	@Column
 	private String currentTurn;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "round_id")
+	private Round round;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "tournament_id")
 	private Tournament tournament;

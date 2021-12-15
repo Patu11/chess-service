@@ -1,11 +1,13 @@
 package com.github.patu11.chessservice.game;
 
 import com.github.patu11.chessservice.exceptions.NotFoundException;
+import com.github.patu11.chessservice.round.Round;
 import com.github.patu11.chessservice.tournament.Tournament;
 import com.github.patu11.chessservice.tournament.TournamentRepository;
 import com.github.patu11.chessservice.tournament.TournamentService;
 import com.github.patu11.chessservice.user.User;
 import com.github.patu11.chessservice.user.UserService;
+import com.github.patu11.chessservice.utils.CodeGenerator;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,11 +23,13 @@ public class GameService {
 
 	private final GameRepository gameRepository;
 	private final UserService userService;
+	private final TournamentRepository tournamentRepository;
 
 	@Autowired
-	public GameService(GameRepository gameRepository, UserService userService) {
+	public GameService(GameRepository gameRepository, UserService userService, TournamentRepository tournamentRepository) {
 		this.gameRepository = gameRepository;
 		this.userService = userService;
+		this.tournamentRepository = tournamentRepository;
 	}
 
 	public Game getRawGameByCode(String code) {
@@ -44,6 +48,37 @@ public class GameService {
 
 	public void updateWinner(String code, Map<String, String> state) {
 		Game g = this.getRawGameByCode(code);
+		//-------------
+		if (g.getTournament() != null) {
+			Tournament t = g.getTournament();
+			if (g.getRound() != null) {
+				int currentRoundNumber = g.getRound().getRoundNumber();
+				if (currentRoundNumber == 3) {
+					t.setWinner(state.get("winner"));
+				} else {
+					log.info("Current round: " + currentRoundNumber);
+					log.info("Next round: " + (currentRoundNumber + 1));
+					Round nextRound = t.getRounds().stream()
+							.filter(round -> round.getRoundNumber() == (currentRoundNumber + 1))
+							.findFirst()
+							.orElseThrow(() -> new NotFoundException("Round not found."));
+					Optional<Game> tempGame = nextRound.getGames().stream()
+							.filter(temp -> temp.getPlayer() == null).findFirst();
+					User winner = this.userService.getRawUserByUsername(state.get("winner"));
+					if (tempGame.isPresent()) {
+						tempGame.get().setPlayer(winner);
+					} else {
+						Game newGame = this.createGameEmptyPlayer(winner);
+						newGame.setTournament(t);
+						newGame.setRound(nextRound);
+						nextRound.getGames().add(newGame);
+					}
+				}
+
+			}
+			this.tournamentRepository.save(t);
+		}
+		//-------------
 		g.setWinner(state.get("winner"));
 		g.setEnded(true);
 		g.setStarted(false);
@@ -68,6 +103,19 @@ public class GameService {
 	public List<String> getAllCodes() {
 		List<Game> games = this.gameRepository.findAll();
 		return games.stream().map(Game::getGameCode).collect(Collectors.toList());
+	}
+
+	public Game createGameEmptyPlayer(User host) {
+		Game g = new Game();
+		final String state = "rp****PR:np****PN:bp****PB:qp****PQ:kp****PK:bp****PB:np****PN:rp****PR";
+		g.setGameCode(CodeGenerator.generateCode());
+		g.setStarted(false);
+		g.setAccepted(false);
+		g.setEnded(false);
+		g.setState(state);
+		g.setCurrentTurn(host.getUsername());
+		g.setHost(host);
+		return g;
 	}
 
 	public void createGame(GameDTO game) {
@@ -98,7 +146,7 @@ public class GameService {
 
 		List<Game> availableGames = this.getAllGamesRaw()
 				.stream()
-				.filter(g -> g.getHost().getUsername().equals(username) || g.getPlayer().getUsername().equals(username))
+				.filter(g -> g.getPlayer() != null && (g.getHost().getUsername().equals(username) || g.getPlayer().getUsername().equals(username)))
 				.filter(g -> !g.isEnded() && g.isAccepted())
 				.collect(Collectors.toList());
 

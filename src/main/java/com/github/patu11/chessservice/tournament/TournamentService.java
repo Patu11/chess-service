@@ -4,9 +4,11 @@ import com.github.patu11.chessservice.exceptions.NotFoundException;
 import com.github.patu11.chessservice.game.Game;
 import com.github.patu11.chessservice.game.GameDTO;
 import com.github.patu11.chessservice.game.GameService;
+import com.github.patu11.chessservice.round.Round;
 import com.github.patu11.chessservice.user.User;
 import com.github.patu11.chessservice.user.UserDTO;
 import com.github.patu11.chessservice.user.UserService;
+import com.github.patu11.chessservice.utils.CodeGenerator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.log4j.Log4j;
@@ -65,7 +67,8 @@ public class TournamentService {
 	}
 
 	public TournamentDTO getTournament(Long tournamentId) {
-		return new TournamentDTO(this.getTournamentRaw(tournamentId));
+		Tournament temp = this.getTournamentRaw(tournamentId);
+		return new TournamentDTO(temp);
 	}
 
 	public Tournament getTournamentRaw(Long tournamentId) {
@@ -99,27 +102,33 @@ public class TournamentService {
 
 	public void handleTournamentStart(Tournament tournament) {
 		List<Pair<User, User>> roundGames = this.rollBracket(tournament);
-		List<String> temp = roundGames.stream().map(r -> r.getFirst().getUsername() + ":" + r.getSecond().getUsername()).collect(Collectors.toList());
-		if (tournament.getBracket() == null || tournament.getBracket().isBlank()) {
-			tournament.setBracket(new Gson().toJson(temp));
-		}
 
-//		System.out.println(new Gson().fromJson(tournament.getBracket(), List.class));
+		//Adding games to database
+		Round r1 = new Round();
+		r1.setRoundNumber(1);
+		r1.setTournament(tournament);
 
-		//Creating games to database
-		tournament.setGames(this.generateGames(tournament, roundGames));
+		Round r2 = new Round();
+		r2.setRoundNumber(2);
+		r2.setTournament(tournament);
+
+		Round r3 = new Round();
+		r3.setRoundNumber(3);
+		r3.setTournament(tournament);
+		tournament.setGames(this.generateGames(tournament, roundGames, r1));
+		tournament.setRounds(List.of(r1, r2, r3));
 		this.tournamentRepository.save(tournament);
 	}
 
-	private List<Game> generateGames(Tournament tournament, List<Pair<User, User>> roundGames) {
+	private List<Game> generateGames(Tournament tournament, List<Pair<User, User>> roundGames, Round r) {
 		List<String> codes = this.gameService.getAllCodes();
 		final String state = "rp****PR:np****PN:bp****PB:qp****PQ:kp****PK:bp****PB:np****PN:rp****PR";
 		List<Game> gameList = new ArrayList<>();
 
 		for (Pair<User, User> round : roundGames) {
-			String code = this.generateCode();
+			String code = CodeGenerator.generateCode();
 			while (codes.contains(code)) {
-				code = this.generateCode();
+				code = CodeGenerator.generateCode();
 			}
 
 			Game g = new Game();
@@ -133,23 +142,9 @@ public class TournamentService {
 			g.setHost(round.getFirst());
 			g.setPlayer(round.getSecond());
 			g.setTournament(tournament);
+			g.setRound(r);
 			gameList.add(g);
 		}
 		return gameList;
-	}
-
-	private String generateCode() {
-		String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		String LOWER = "abcdefghijklmnopqrstuvwxyz";
-		String NUMBERS = "0123456789";
-		String ALPHA = UPPER + LOWER + NUMBERS;
-		int LENGTH = 6;
-
-		StringBuilder code = new StringBuilder();
-
-		for (int i = 0; i < LENGTH; i++) {
-			code.append(ALPHA.charAt((int) Math.floor(Math.random() * ALPHA.length())));
-		}
-		return code.toString();
 	}
 }

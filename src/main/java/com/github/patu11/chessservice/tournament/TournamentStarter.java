@@ -3,6 +3,8 @@ package com.github.patu11.chessservice.tournament;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.github.patu11.chessservice.game.Game;
+import com.github.patu11.chessservice.round.Round;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,14 +21,6 @@ public class TournamentStarter {
 	public TournamentStarter(TournamentService tournamentService) {
 		this.tournamentService = tournamentService;
 	}
-
-//	@Scheduled(fixedDelay = 10000)
-//	public void handleTournamentRounds() {
-//		List<Tournament> tournaments = this.tournamentService.getAllRaw();
-//		for (Tournament t : tournaments) {
-//			System.out.println(t.getGames().size());
-//		}
-//	}
 
 //	@Scheduled(fixedDelay = 10000)
 //	public void handleTournamentStart() {

@@ -24,7 +24,8 @@ public class GameDTO {
 	public GameDTO(Game game) {
 		this.code = game.getGameCode();
 		this.host = game.getHost().getUsername();
-		this.player = game.getPlayer().getUsername();
+//		this.player = game.getPlayer().getUsername();
+		this.player = game.getPlayer() != null ? game.getPlayer().getUsername() : "";
 		this.state = game.getState();
 		this.winner = game.getWinner();
 		this.currentTurn = game.getCurrentTurn();

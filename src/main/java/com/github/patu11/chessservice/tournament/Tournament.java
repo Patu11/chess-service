@@ -3,6 +3,7 @@ package com.github.patu11.chessservice.tournament;
 import com.github.patu11.chessservice.comment.Comment;
 import com.github.patu11.chessservice.game.Game;
 import com.github.patu11.chessservice.role.Role;
+import com.github.patu11.chessservice.round.Round;
 import com.github.patu11.chessservice.user.User;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
@@ -33,10 +34,7 @@ public class Tournament {
 
 	@Column
 	private String title;
-
-	@Column
-	private String bracket;
-
+	
 	@Column
 	private int maxPlayers;
 
@@ -52,6 +50,10 @@ public class Tournament {
 	@Fetch(FetchMode.SELECT)
 	@OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Game> games = new ArrayList<>();
+
+	@Fetch(FetchMode.SELECT)
+	@OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Round> rounds = new ArrayList<>();
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
@@ -69,6 +71,16 @@ public class Tournament {
 	public void removeUser(User user) {
 		user.removeTournament(this);
 		this.users.remove(user);
+	}
+
+	public void addRound(Round round) {
+		round.setTournament(this);
+		this.rounds.add(round);
+	}
+
+	public void removeRound(Round round) {
+		round.setTournament(null);
+		this.rounds.remove(round);
 	}
 
 	public void addGame(Game game) {
