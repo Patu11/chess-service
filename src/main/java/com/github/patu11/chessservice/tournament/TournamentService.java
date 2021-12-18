@@ -53,10 +53,33 @@ public class TournamentService {
 	public int removeUserFromTournament(Long tournamentId, Map<String, String> data) {
 		User user = this.userService.getRawUserByUsername(data.get("username"));
 		Tournament t = this.getTournamentRaw(tournamentId);
+
+		if (t.getWinner() == null || t.getWinner().isBlank()) {
+			Optional<Game> g = t.getGames().stream().filter(gm -> (gm.getPlayer() == user || gm.getHost() == user) && !gm.isEnded()).findFirst();
+			if (g.isPresent()) {
+				Game game = g.get();
+				if (game.getHost().getUsername().equals(user.getUsername())) {
+					game.setWinner(game.getPlayer().getUsername());
+				} else if (game.getPlayer().getUsername().equals(user.getUsername())) {
+					game.setWinner(game.getHost().getUsername());
+				}
+				game.setEnded(true);
+				game.setStarted(false);
+			}
+		}
+
 		t.removeUser(user);
 		this.tournamentRepository.save(t);
 		return t.getUsers().size();
 	}
+
+//	public int removeUserFromTournament(Long tournamentId, Map<String, String> data) {
+//		User user = this.userService.getRawUserByUsername(data.get("username"));
+//		Tournament t = this.getTournamentRaw(tournamentId);
+//		t.removeUser(user);
+//		this.tournamentRepository.save(t);
+//		return t.getUsers().size();
+//	}
 
 	public int addUserToTournament(Long tournamentId, Map<String, String> data) {
 		User user = this.userService.getRawUserByUsername(data.get("username"));

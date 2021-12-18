@@ -56,8 +56,6 @@ public class GameService {
 				if (currentRoundNumber == 3) {
 					t.setWinner(state.get("winner"));
 				} else {
-					log.info("Current round: " + currentRoundNumber);
-					log.info("Next round: " + (currentRoundNumber + 1));
 					Round nextRound = t.getRounds().stream()
 							.filter(round -> round.getRoundNumber() == (currentRoundNumber + 1))
 							.findFirst()
