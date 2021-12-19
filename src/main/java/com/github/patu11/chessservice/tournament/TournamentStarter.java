@@ -28,16 +28,16 @@ public class TournamentStarter {
 //		this.tournamentService.handleTournamentStart(this.tournamentService.getTournamentRaw(1L));
 //	}
 
-//	@Scheduled(cron = "0 1 0 * * ?")
-//	public void handleTournamentStart() {
-//		LocalDate now = LocalDate.now();
-//		List<Tournament> tournaments = this.tournamentService.getAllRaw();
-//		for (Tournament t : tournaments) {
-//			if (t.getStartDate().isEqual(now) && t.getMaxPlayers() == t.getUsers().size()) {
-//				this.tournamentService.handleTournamentStart(t);
-//			} else if (t.getStartDate().isEqual(now) && t.getMaxPlayers() > t.getUsers().size()) {
-//				this.tournamentService.deleteTournament(t.getTournamentId());
-//			}
-//		}
-//	}
+	@Scheduled(cron = "0 1 0 * * ?")
+	public void handleTournamentStart() {
+		LocalDate now = LocalDate.now();
+		List<Tournament> tournaments = this.tournamentService.getAllRaw();
+		for (Tournament t : tournaments) {
+			if (t.getStartDate().isEqual(now) && t.getMaxPlayers() == t.getUsers().size()) {
+				this.tournamentService.handleTournamentStart(t);
+			} else if (t.getStartDate().isEqual(now) && t.getMaxPlayers() > t.getUsers().size()) {
+				this.tournamentService.deleteTournament(t.getTournamentId());
+			}
+		}
+	}
 }
