@@ -63,6 +63,7 @@ public class TournamentService {
 				} else if (game.getPlayer().getUsername().equals(user.getUsername())) {
 					game.setWinner(game.getHost().getUsername());
 				}
+				game.setAccepted(true);
 				game.setEnded(true);
 				game.setStarted(false);
 			}
@@ -72,15 +73,7 @@ public class TournamentService {
 		this.tournamentRepository.save(t);
 		return t.getUsers().size();
 	}
-
-//	public int removeUserFromTournament(Long tournamentId, Map<String, String> data) {
-//		User user = this.userService.getRawUserByUsername(data.get("username"));
-//		Tournament t = this.getTournamentRaw(tournamentId);
-//		t.removeUser(user);
-//		this.tournamentRepository.save(t);
-//		return t.getUsers().size();
-//	}
-
+	
 	public int addUserToTournament(Long tournamentId, Map<String, String> data) {
 		User user = this.userService.getRawUserByUsername(data.get("username"));
 		Tournament t = this.getTournamentRaw(tournamentId);

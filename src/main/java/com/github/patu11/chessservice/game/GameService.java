@@ -49,27 +49,43 @@ public class GameService {
 	public void updateWinner(String code, Map<String, String> state) {
 		Game g = this.getRawGameByCode(code);
 		//-------------
+		//check if game is tournament game
 		if (g.getTournament() != null) {
 			Tournament t = g.getTournament();
 			if (g.getRound() != null) {
+				//check round number where game was played
 				int currentRoundNumber = g.getRound().getRoundNumber();
+				//if it is last round then set winner for entire tournament
 				if (currentRoundNumber == 3) {
 					t.setWinner(state.get("winner"));
 				} else {
-					Round nextRound = t.getRounds().stream()
-							.filter(round -> round.getRoundNumber() == (currentRoundNumber + 1))
-							.findFirst()
-							.orElseThrow(() -> new NotFoundException("Round not found."));
-					Optional<Game> tempGame = nextRound.getGames().stream()
-							.filter(temp -> temp.getPlayer() == null).findFirst();
-					User winner = this.userService.getRawUserByUsername(state.get("winner"));
-					if (tempGame.isPresent()) {
-						tempGame.get().setPlayer(winner);
-					} else {
-						Game newGame = this.createGameEmptyPlayer(winner);
+					//check if game end up with draw, if yes create another game with switched players
+					if (state.get("winner").equals("DRAW")) {
+						Game newGame = this.createGameEmptyPlayer(g.getPlayer());
+						newGame.setPlayer(g.getHost());
 						newGame.setTournament(t);
-						newGame.setRound(nextRound);
-						nextRound.getGames().add(newGame);
+						newGame.setRound(g.getRound());
+						this.gameRepository.save(newGame);
+					} else {
+						//get next round based on previous round number
+						Round nextRound = t.getRounds().stream()
+								.filter(round -> round.getRoundNumber() == (currentRoundNumber + 1))
+								.findFirst()
+								.orElseThrow(() -> new NotFoundException("Round not found."));
+
+						Optional<Game> tempGame = nextRound.getGames().stream()
+								.filter(temp -> temp.getPlayer() == null).findFirst();
+						User winner = this.userService.getRawUserByUsername(state.get("winner"));
+						//check if there is game with empty player which means that someone already won game
+						if (tempGame.isPresent()) {
+							tempGame.get().setPlayer(winner);
+							//if no one won game create new and set first player, add new game to round
+						} else {
+							Game newGame = this.createGameEmptyPlayer(winner);
+							newGame.setTournament(t);
+							newGame.setRound(nextRound);
+							nextRound.getGames().add(newGame);
+						}
 					}
 				}
 
@@ -119,12 +135,7 @@ public class GameService {
 	public void createGame(GameDTO game) {
 		User host = this.userService.getRawUserByUsername(game.getHost());
 		User player = this.userService.getRawUserByUsername(game.getPlayer());
-//		Tournament tournament = null;
-//		if (game.getTournamentId() != null) {
-//			tournament = this.tournamentRepository.findById(game.getTournamentId()).orElseThrow(() -> new NotFoundException("Tournament not found."));
-//		}
-
-
+		
 		Game g = new Game();
 		g.setGameCode(game.getCode());
 		g.setStarted(game.isStarted());
@@ -135,7 +146,6 @@ public class GameService {
 		g.setCurrentTurn(host.getUsername());
 		g.setHost(host);
 		g.setPlayer(player);
-//		g.setTournament(tournament);
 
 		this.gameRepository.save(g);
 	}
