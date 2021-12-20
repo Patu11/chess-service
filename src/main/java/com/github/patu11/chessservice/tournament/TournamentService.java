@@ -50,6 +50,14 @@ public class TournamentService {
 		this.tournamentRepository.delete(t);
 	}
 
+	public void deleteTournamentGames(Long tournamentId) {
+		Tournament t = this.getTournamentRaw(tournamentId);
+		this.gameService.deleteGames(t.getGames().stream()
+				.filter(g -> !g.isAccepted())
+				.collect(Collectors.toList()));
+	}
+
+
 	public int removeUserFromTournament(Long tournamentId, Map<String, String> data) {
 		User user = this.userService.getRawUserByUsername(data.get("username"));
 		Tournament t = this.getTournamentRaw(tournamentId);
@@ -58,11 +66,16 @@ public class TournamentService {
 			Optional<Game> g = t.getGames().stream().filter(gm -> (gm.getPlayer() == user || gm.getHost() == user) && !gm.isEnded()).findFirst();
 			if (g.isPresent()) {
 				Game game = g.get();
+				Map<String, String> winner = new HashMap<>();
 				if (game.getHost().getUsername().equals(user.getUsername())) {
-					game.setWinner(game.getPlayer().getUsername());
+					winner.put("winner", game.getPlayer().getUsername());
+//					game.setWinner(game.getPlayer().getUsername());
 				} else if (game.getPlayer().getUsername().equals(user.getUsername())) {
-					game.setWinner(game.getHost().getUsername());
+					winner.put("winner", game.getHost().getUsername());
+//					game.setWinner(game.getHost().getUsername());
 				}
+
+				this.gameService.updateWinner(game.getGameCode(), winner);
 				game.setAccepted(true);
 				game.setEnded(true);
 				game.setStarted(false);
@@ -73,7 +86,7 @@ public class TournamentService {
 		this.tournamentRepository.save(t);
 		return t.getUsers().size();
 	}
-	
+
 	public int addUserToTournament(Long tournamentId, Map<String, String> data) {
 		User user = this.userService.getRawUserByUsername(data.get("username"));
 		Tournament t = this.getTournamentRaw(tournamentId);

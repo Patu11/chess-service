@@ -135,7 +135,7 @@ public class GameService {
 	public void createGame(GameDTO game) {
 		User host = this.userService.getRawUserByUsername(game.getHost());
 		User player = this.userService.getRawUserByUsername(game.getPlayer());
-		
+
 		Game g = new Game();
 		g.setGameCode(game.getCode());
 		g.setStarted(game.isStarted());
@@ -148,6 +148,10 @@ public class GameService {
 		g.setPlayer(player);
 
 		this.gameRepository.save(g);
+	}
+
+	public void deleteGames(List<Game> games) {
+		this.gameRepository.deleteAll(games);
 	}
 
 	public GameDTO getGameByHostOrUser(String username) {
