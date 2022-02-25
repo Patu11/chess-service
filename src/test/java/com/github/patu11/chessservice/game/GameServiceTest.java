@@ -27,7 +27,8 @@ class GameServiceTest {
 	@Test
 	void should_accept_game_invite() {
 		when(gameRepository.findById("as12Qw1")).thenReturn(
-				Optional.of(new Game("as12Qw1", false, false, false, "", "", "", new Round(), new Tournament(), new User(), new User()))
+				Optional.of(new Game("as12Qw1", false, false, false, "", "",
+						"", new Round(), new Tournament(), new User(), new User()))
 		);
 
 		gameService.acceptGameInvite("as12Qw1");
@@ -38,9 +39,12 @@ class GameServiceTest {
 	@Test
 	void should_return_all_games_codes() {
 		when(gameRepository.findAll()).thenReturn(Arrays.asList(
-				new Game("as12Qw1", false, false, false, "", "", "", new Round(), new Tournament(), new User(), new User()),
-				new Game("as12Qw2", false, false, false, "", "", "", new Round(), new Tournament(), new User(), new User()),
-				new Game("as12Qw3", false, false, false, "", "", "", new Round(), new Tournament(), new User(), new User())
+				new Game("as12Qw1", false, false, false, "", "", "",
+						new Round(), new Tournament(), new User(), new User()),
+				new Game("as12Qw2", false, false, false, "", "", "",
+						new Round(), new Tournament(), new User(), new User()),
+				new Game("as12Qw3", false, false, false, "", "", "",
+						new Round(), new Tournament(), new User(), new User())
 		));
 
 		List<String> codes = gameService.getAllCodes();

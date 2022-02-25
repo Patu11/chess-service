@@ -24,7 +24,7 @@ public class TournamentStarter {
 
 //	@Scheduled(fixedDelay = 10000)
 //	public void handleTournamentStart() {
-//		this.tournamentService.handleTournamentStart(this.tournamentService.getTournamentRaw(3L));
+//		this.tournamentService.handleTournamentStart(this.tournamentService.getTournamentRaw(5L));
 //	}
 
 	@Scheduled(cron = "0 1 0 * * ?")

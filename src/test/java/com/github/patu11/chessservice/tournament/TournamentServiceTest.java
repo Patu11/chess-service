@@ -26,9 +26,12 @@ class TournamentServiceTest {
 	@Test
 	public void find_all_should_return_all_tournaments() {
 		when(tournamentRepository.findAll()).thenReturn(Arrays.asList(
-				new Tournament(1L, "test1", 8, LocalDate.parse("2022-10-12"), LocalDate.parse("2022-10-20"), "", new LinkedList<>(), new LinkedList<>(), new HashSet<>()),
-				new Tournament(2L, "test2", 8, LocalDate.parse("2022-10-20"), LocalDate.parse("2022-10-25"), "", new LinkedList<>(), new LinkedList<>(), new HashSet<>()),
-				new Tournament(3L, "test3", 8, LocalDate.parse("2022-10-25"), LocalDate.parse("2022-10-30"), "", new LinkedList<>(), new LinkedList<>(), new HashSet<>())
+				new Tournament(1L, "test1", 8, LocalDate.parse("2022-10-12"),
+						LocalDate.parse("2022-10-20"), "", new LinkedList<>(), new LinkedList<>(), new HashSet<>()),
+				new Tournament(2L, "test2", 8, LocalDate.parse("2022-10-20"),
+						LocalDate.parse("2022-10-25"), "", new LinkedList<>(), new LinkedList<>(), new HashSet<>()),
+				new Tournament(3L, "test3", 8, LocalDate.parse("2022-10-25"),
+						LocalDate.parse("2022-10-30"), "", new LinkedList<>(), new LinkedList<>(), new HashSet<>())
 		));
 
 		List<Tournament> tournaments = tournamentService.getAllRaw();
